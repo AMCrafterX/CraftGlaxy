@@ -1,1 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlaxyCraft Marketplace</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 0; 
+      background: #cce6ff; 
+      padding-bottom: 60px;
+    }
+    
+    header { 
+      background: white; 
+      padding: 10px; 
+      text-align: center; 
+      font-size: 22px; 
+      font-weight: bold; 
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    header span { 
+      color: gold; 
+    }
+    
+    .user-status {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-status button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #00aaff;
+      color: white;
+      font-size: 12px;
+    }
+    
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #00aaff;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 10px;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .search-bar { 
+      text-align: center; 
+      margin: 10px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .search-bar input {
+      padding: 10px 15px; 
+      width: 70%; 
+      border-radius: 20px; 
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+    
+    .search-bar button {
+      padding: 10px; 
+      border: none; 
+      background: white;
+      cursor: pointer; 
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
+    
+    .category-filter {
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .category-filter select {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      background: white;
+    }
+    
+    .addon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    
+    .addon-card {
+      background: white; 
+      border: 1px solid #999; 
+      border-radius: 15px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    
+    .addon-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .addon-card img { 
+      width: 100%; 
+      border-radius: 10px; 
+      height: 180px;
+      object-fit: cover;
+    }
+    
+    .addon-card h3 { 
+      margin: 10px 0 5px; 
+      font-size: 18px;
+    }
+    
+    .addon-card p { 
+      font-size: 14px; 
+      line-height: 1.4em; 
+      color: #555;
+      margin-bottom: 10px;
+    }
+    
+    .download-btn {
+      display: block; 
+      text-align: center; 
+      margin: 10px auto;
+      padding: 10px 15px; 
+      background: #eee; 
+      border: 1px solid #333;
+      border-radius: 10px; 
+      text-decoration: none; 
+      color: black; 
+      font-weight: bold; 
+      width: 140px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .download-btn:hover {
+      background: #ddd;
+    }
+    
+    .download-count {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .favorite { 
+      color: #ccc; 
+      cursor: pointer; 
+      font-size: 24px; 
+      position: absolute; 
+      top: 15px; 
+      right: 15px; 
+      background: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .favorite.active { 
+      color: gold; 
+    }
+    
+    .bottom-actions { 
+      display: flex; 
+      justify-content: space-around; 
+      padding: 10px; 
+      border-top: 1px solid #ddd; 
+      margin-top: 10px;
+    }
+    
+    .bottom-actions div { 
+      text-align: center; 
+      cursor: pointer; 
+      padding: 5px;
+      transition: color 0.2s;
+    }
+    
+    .bottom-actions div:hover {
+      color: #00aaff;
+    }
+    
+    .navbar {
+      position: fixed; 
+      bottom: 0; 
+      left: 0; 
+      width: 100%;
+      background: white; 
+      border-top: 1px solid #ccc;
+      display: flex; 
+      justify-content: space-around; 
+      padding: 12px 0;
+      z-index: 1000;
+    }
+    
+    .navbar a { 
+      text-decoration: none; 
+      color: black; 
+      font-size: 14px; 
+      cursor: pointer; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .dropdown-content {
+      display: none; 
+      position: absolute; 
+      bottom: 50px; 
+      left: 10px;
+      background: white; 
+      min-width: 160px; 
+      border: 1px solid #ccc; 
+      border-radius: 6px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.2); 
+      z-index: 999;
+    }
+    
+    .dropdown-content a { 
+      display: block; 
+      padding: 10px; 
+      color: black; 
+      text-decoration: none; 
+      font-size: 14px; 
+    }
+    
+    .dropdown-content a:hover { 
+      background: #f1f1f1; 
+    }
+    
+    .show { 
+      display: block; 
+    }
+    
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0; 
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.5);
+      justify-content: center; 
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: white; 
+      padding: 20px; 
+      border-radius: 8px;
+      width: 300px; 
+      text-align: center; 
+      position: relative;
+      max-width: 90%;
+    }
+    
+    .modal-content input, .modal-content select, .modal-content textarea { 
+      width: 100%; 
+      padding: 10px; 
+      margin: 8px 0; 
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .login-btn, .register-btn {
+      color: white; 
+      padding: 10px 15px; 
+      border: none; 
+      border-radius: 5px;
+      cursor: pointer; 
+      width: 100%; 
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    
+    .login-btn { 
+      background: #00aaff; 
+    }
+    
+    .register-btn { 
+      background: #00aaff; 
+    }
+    
+    .close { 
+      position: absolute; 
+      top: 10px; 
+      right: 10px; 
+      cursor: pointer; 
+      font-size: 18px; 
+    }
+    
+    .switch-link { 
+      margin-top: 10px; 
+      cursor: pointer; 
+      color: blue; 
+      text-decoration: underline; 
+      display: inline-block; 
+      font-size: 14px;
+    }
+    
+    .settings-page { 
+      display: none; 
+      padding: 20px; 
+    }
+    
+    .toggle { 
+      margin: 10px 0; 
+    }
 
+    .profile-settings input, .profile-settings select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .profile-picture-upload {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .profile-picture-upload button {
+      margin: 5px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .stars span { 
+      font-size: 24px; 
+      cursor:pointer; 
+      color:#555; 
+      transition: color 0.2s;
+    }
+    
+    .stars span.active { 
+      color: gold; 
+    }
+    
+    .comment-box { 
+      margin-top: 10px; 
+    }
+    
+    .comment { 
+      margin: 8px 0; 
+      padding: 10px; 
+      background:#f0f0f0; 
+      border-radius:5px; 
+      color:black; 
+    }
+    
+    .reply { 
+      font-size:12px; 
+      color:blue; 
+      cursor:pointer; 
+      margin-left:10px; 
+    }
+    
+    .reply-box { 
+      margin-left:20px; 
+      margin-top:5px; 
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .addon-details {
+      display: none;
+      padding: 20px;
+    }
+    
+    .back-btn {
+      padding: 10px 15px;
+      background: #00aaff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .comment-section {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 10px;
+    }
+
+    .comment-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .color-picker {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .color-option {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .color-option.selected {
+      border-color: #000;
+    }
+
+    .about-section, .help-section {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+    
+    body.dark { 
+      background: #121212; 
+      color: white; 
+    }
+    
+    body.dark header { 
+      background: black; 
+      color: white; 
+    }
+    
+    body.dark .addon-card { 
+      background: #1e1e1e; 
+      color: white; 
+      border: 1px solid #333; 
+    }
+    
+    body.dark .download-btn { 
+      background: #333; 
+      color: white; 
+      border: 1px solid #555;
+    }
+    
+    body.dark .navbar { 
+      background: #1e1e1e; 
+      border-top: 1px solid #333;
+    }
+    
+    body.dark .navbar a { 
+      color: white; 
+    }
+    
+    body.dark .dropdown-content { 
+      background: #1e1e1e; 
+      border: 1px solid #333;
+    }
+    
+    body.dark .dropdown-content a { 
+      color: white; 
+    }
+    
+    body.dark .dropdown-content a:hover { 
+      background: #333; 
+    }
+    
+    body.dark .modal-content { 
+      background: #1e1e1e; 
+      color: white; 
+    }
+    
+    body.dark .comment { 
+      background:#222; 
+      color:white; 
+    }
+    
+    body.dark .category-filter select {
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+    }
+    
+    body.dark .search-bar input {
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+    }
+    
+    body.dark .download-count { 
+      color: #ccc; 
+    }
+
+    body.dark .profile-settings input,
+    body.dark .profile-settings select {
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    body.dark .comment-section {
+      background: #2a2a2a;
+    }
+
+    body.dark .about-section,
+    body.dark .help-section {
+      background: #2a2a2a;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 5px;
+      color: white;
+      z-index: 10000;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .notification.success {
+      background: #4CAF50;
+    }
+    
+    .notification.error {
+      background: #f44336;
+    }
+    
+    .notification.info {
+      background: #2196F3;
+    }
+
+    .country-select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span>GlaxyCraft</span>Marketplace
+    <div class="user-status" id="userStatus">
+      <div id="userInfo" style="display:none;">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span id="userName"></span>
+        <button onclick="logout()">Logout</button>
+      </div>
+      <div id="guestInfo">
+        <button onclick="openLogin()">Login</button>
+        <button onclick="showRegister()" style="background: #ff4444;">Register</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search addons..." onkeypress="handleSearchKeypress(event)">
+    <button onclick="searchAddon()">🔍</button>
+  </div>
+
+  <div class="category-filter">
+    <select id="categoryFilter" onchange="filterByCategory()">
+      <option value="all">All Categories</option>
+      <option value="addon">Addon</option>
+      <option value="mod">Mod</option>
+      <option value="shader">Shader</option>
+      <option value="skin">Skin</option>
+      <option value="texture">Texture Pack</option>
+    </select>
+  </div>
+
+  <div class="loading" id="loadingIndicator">
+    <p>Loading addons...</p>
+  </div>
+
+  <div class="addon-grid" id="addonGrid">
+  </div>
+
+  <div id="addonDetails" class="addon-details">
+    <button class="back-btn" onclick="goBack()">← Back to Addons</button>
+    <div id="detailsContent"></div>
+  </div>
+
+  <div class="navbar">
+    <a onclick="toggleDropdown()">📂 All</a>
+    <a onclick="openUploadModal()">📤 Upload</a>
+    <a onclick="openSettings()">👤 Profile</a>
+    <a onclick="openSettings()">⚙️ Settings</a>
+  </div>
+
+  <div id="dropdownMenu" class="dropdown-content">
+    <a href="#" onclick="filterByCategory('all')">All</a>
+    <a href="#" onclick="filterByCategory('addon')">Addon</a>
+    <a href="#" onclick="filterByCategory('mod')">Mod</a>
+    <a href="#" onclick="filterByCategory('shader')">Shader</a>
+    <a href="#" onclick="filterByCategory('skin')">Skin</a>
+    <a href="#" onclick="filterByCategory('texture')">Texture Pack</a>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLogin()">✖</span>
+      <div id="loginBox">
+        <h3>Login to Your Account</h3>
+        <input type="text" id="loginUsername" placeholder="Email or Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button class="login-btn" onclick="login()">Login</button>
+        <p><a href="#" onclick="showForgotPassword()">Forgot Password?</a></p>
+        <span class="switch-link" onclick="showRegister()">Don't have an account? Register here</span>
+      </div>
+      
+      <div id="registerBox" style="display:none;">
+        <h3>Create New Account</h3>
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="email" id="regEmail" placeholder="Email">
+        <input type="password" id="regPassword" placeholder="Password">
+        <input type="password" id="regConfirmPassword" placeholder="Confirm Password">
+        <select id="regCountry" class="country-select">
+          <option value="">Select Country</option>
+          <option value="mm">Myanmar</option>
+          <option value="us">United States</option>
+          <option value="uk">United Kingdom</option>
+          <option value="sg">Singapore</option>
+          <option value="th">Thailand</option>
+        </select>
+        <button class="register-btn" onclick="register()">Register</button>
+        <span class="switch-link" onclick="showLogin()">Already have an account? Login here</span>
+      </div>
+      
+      <div id="forgotPasswordBox" style="display:none;">
+        <h3>Reset Password</h3>
+        <p>Enter your email to receive reset instructions</p>
+        <input type="email" id="resetEmail" placeholder="Your email">
+        <button class="login-btn" onclick="resetPassword()">Send Reset Link</button>
+        <span class="switch-link" onclick="showLogin()">Back to Login</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Page -->
+  <div id="settingsPage" class="settings-page">
+    <button class="back-btn" onclick="closeSettings()">← Back</button>
+    
+    <h3>👤 Profile Settings</h3>
+    <div class="profile-settings">
+      <div class="profile-picture-upload">
+        <div class="current-avatar">
+          <img id="profileImage" src="" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #00aaff; margin-bottom: 10px;">
+        </div>
+        <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+        <button onclick="document.getElementById('profileImageInput').click()" style="background: #00aaff; color: white;">Choose Image</button>
+        <button onclick="uploadProfileImage()" style="background: #4CAF50; color: white;">Upload</button>
+      </div>
+
+      <input type="text" id="profileName" placeholder="Full Name">
+      <input type="text" id="profileUsername" placeholder="Username">
+      <input type="email" id="profileEmail" placeholder="Email">
+      <select id="profileCountry" class="country-select">
+        <option value="">Select Country</option>
+        <option value="mm">Myanmar</option>
+        <option value="us">United States</option>
+        <option value="uk">United Kingdom</option>
+        <option value="sg">Singapore</option>
+        <option value="th">Thailand</option>
+      </select>
+      <input type="password" id="profilePassword" placeholder="New Password (optional)">
+      <button onclick="updateProfile()" style="padding: 10px; background: #00aaff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%;">Update Profile</button>
+    </div>
+
+    <h3>🎨 App Color Theme</h3>
+    <div class="color-picker">
+      <div class="color-option selected" style="background: #00aaff;" onclick="changeThemeColor('#00aaff')"></div>
+      <div class="color-option" style="background: #ff4444;" onclick="changeThemeColor('#ff4444')"></div>
+      <div class="color-option" style="background: #4CAF50;" onclick="changeThemeColor('#4CAF50')"></div>
+      <div class="color-option" style="background: #9C27B0;" onclick="changeThemeColor('#9C27B0')"></div>
+      <div class="color-option" style="background: #FF9800;" onclick="changeThemeColor('#FF9800')"></div>
+    </div>
+
+    <h3>📢 About</h3>
+    <div class="about-section">
+      <p><strong>Telegram Channel:</strong> 
+        <a href="https://t.me/amcrafter_world" onclick="event.preventDefault(); showNotification('Join our Telegram channel!', 'info')" style="color: #00aaff; text-decoration: none;">
+          https://t.me/amcrafter_world
+        </a>
+      </p>
+      <p>Join our community for latest updates and support!</p>
+    </div>
+
+    <h3>❓ Help & Support</h3>
+    <div class="help-section">
+      <p><strong>Contact Support:</strong> 
+        <a href="https://t.me/Blacking_Maxxx" onclick="event.preventDefault(); showNotification('Contact @Blacking_Maxxx for help', 'info')" style="color: #00aaff; text-decoration: none;">
+          @Blacking_Maxxx
+        </a>
+      </p>
+      <p><strong>Advertising:</strong> 
+        <a href="https://t.me/Blacking_Maxxx" onclick="event.preventDefault(); showNotification('Contact @Blacking_Maxxx for ads', 'info')" style="color: #00aaff; text-decoration: none;">
+          @Blacking_Maxxx
+        </a>
+      </p>
+    </div>
+
+    <h3>⭐ Favorite Addons</h3>
+    <div id="favoriteList"></div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div id="uploadModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeUploadModal()">✖</span>
+      <h3>📤 Upload New Addon</h3>
+      <input type="text" id="addonName" placeholder="Addon Name">
+      <textarea id="addonDescription" placeholder="Description"></textarea>
+      <input type="text" id="addonVersion" placeholder="Version (e.g., 1.0.0)">
+      <select id="addonCategory">
+        <option value="addon">Addon</option>
+        <option value="mod">Mod</option>
+        <option value="shader">Shader</option>
+        <option value="skin">Skin</option>
+        <option value="texture">Texture Pack</option>
+      </select>
+      <input type="url" id="addonDownloadLink" placeholder="Download Link (MediaFire, etc.)">
+      <input type="url" id="addonImageLink" placeholder="Image URL (optional)">
+      <button onclick="submitAddon()" style="padding: 10px; background: #00aaff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%;">Submit Addon</button>
+    </div>
+  </div>
+
+  <!-- Rate & Comment Modal -->
+  <div id="rateModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeRateModal()">✖</span>
+      <h3>Rate this Addon</h3>
+      <div class="stars" id="stars">
+        <span onclick="setStar(1)">★</span>
+        <span onclick="setStar(2)">★</span>
+        <span onclick="setStar(3)">★</span>
+        <span onclick="setStar(4)">★</span>
+        <span onclick="setStar(5)">★</span>
+      </div>
+      <textarea id="reviewText" placeholder="Write your review (optional)" style="height: 80px;"></textarea>
+      <button onclick="confirmRate()" style="padding: 8px 15px; background: #00aaff; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Submit Review</button>
+      
+      <div class="comment-section">
+        <h4>Comments</h4>
+        <div id="commentsList"></div>
+        <input type="text" id="commentInput" class="comment-input" placeholder="Write a comment...">
+        <button onclick="addComment()" style="padding: 8px 15px; background: #00aaff; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Post Comment</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample addon data
+    const addons = [
+      {
+        id: 1,
+        name: "Demon Slayer Addon",
+        description: "Demon Slayer အကျိုးသက်ရောက်မှုများပါတဲ့ addon တစ်ခု",
+        image: "https://i.ibb.co/jfMPK5k/mc.png",
+        category: "addon",
+        downloads: 1250,
+        rating: 4.5,
+        version: "1.2.0",
+        author: "AnimeModder",
+        details: "This addon brings the world of Demon Slayer to Minecraft. Features include new weapons, breathing techniques, and demons.",
+        downloadLink: "https://www.mediafire.com/file/qct3vb6kghwrlbb/100_Days%2521_by_AM.mctemplate/file",
+        comments: []
+      }
+    ];
+
+    // User data
+    let currentUser = null;
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    let currentAddonId = null;
+    let currentRate = 0;
+    let themeColor = localStorage.getItem('themeColor') || '#00aaff';
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedUser = localStorage.getItem('currentUser');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        updateUserInterface();
+      }
+      
+      const savedTheme = localStorage.getItem('themeMode') || 'auto';
+      setMode(savedTheme);
+      
+      loadAddons();
+      loadFavorites();
+      loadProfileImage();
+      applyThemeColor();
+    });
+
+    function loadAddons() {
+      const addonGrid = document.getElementById('addonGrid');
+      addonGrid.innerHTML = '';
+      
+      addons.forEach(addon => {
+        const isFavorite = favorites.includes(addon.id);
+        
+        const addonCard = document.createElement('div');
+        addonCard.className = 'addon-card';
+        addonCard.innerHTML = `
+          <span class="favorite ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${addon.id})">${isFavorite ? '★' : '☆'}</span>
+          <img src="${addon.image}" alt="${addon.name}">
+          <h3>${addon.name}</h3>
+          <p>${addon.description}</p>
+          <a href="#" class="download-btn" onclick="downloadAddon(${addon.id})">DOWNLOAD</a>
+          <div class="download-count">Downloads: ${addon.downloads.toLocaleString()}</div>
+          <div class="bottom-actions">
+            <div onclick="openRate(${addon.id})">⭐ Rate (${addon.rating})</div>
+            <div onclick="viewDetails(${addon.id})">🔍 Details</div>
+          </div>
+        `;
+        addonGrid.appendChild(addonCard);
+      });
+    }
+
+    function searchAddon() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const cards = document.querySelectorAll(".addon-card");
+      
+      cards.forEach(card => {
+        const title = card.querySelector("h3").innerText.toLowerCase();
+        card.style.display = title.includes(input) ? "block" : "none";
+      });
+    }
+
+    function handleSearchKeypress(event) {
+      if (event.key === 'Enter') searchAddon();
+    }
+
+    function filterByCategory(category = null) {
+      if (!category) category = document.getElementById('categoryFilter').value;
+      else document.getElementById('categoryFilter').value = category;
+      
+      const cards = document.querySelectorAll(".addon-card");
+      cards.forEach(card => card.style.display = 'block');
+      document.getElementById("dropdownMenu").classList.remove("show");
+    }
+
+    function toggleFavorite(addonId) {
+      if (!currentUser) {
+        showNotification('Please login to add favorites', 'error');
+        openLogin();
+        return;
+      }
+      
+      const index = favorites.indexOf(addonId);
+      if (index > -1) {
+        favorites.splice(index, 1);
+        showNotification('Removed from favorites', 'info');
+      } else {
+        favorites.push(addonId);
+        showNotification('Added to favorites', 'success');
+      }
+      
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      loadAddons();
+      loadFavorites();
+    }
+
+    function loadFavorites() {
+      const favoriteList = document.getElementById('favoriteList');
+      favoriteList.innerHTML = '';
+      
+      if (favorites.length === 0) {
+        favoriteList.innerHTML = '<p>No favorites yet</p>';
+        return;
+      }
+      
+      favorites.forEach(id => {
+        const addon = addons.find(a => a.id === id);
+        if (addon) {
+          const favItem = document.createElement('div');
+          favItem.className = 'addon-card';
+          favItem.innerHTML = `
+            <h3>${addon.name}</h3>
+            <p>${addon.description}</p>
+            <button onclick="viewDetails(${addon.id})" style="padding: 8px 15px; background: #00aaff; color: white; border: none; border-radius: 4px; cursor: pointer;">View Details</button>
+          `;
+          favoriteList.appendChild(favItem);
+        }
+      });
+    }
+
+    function viewDetails(addonId) {
+      const addon = addons.find(a => a.id === addonId);
+      if (!addon) return;
+      
+      document.getElementById('addonGrid').style.display = 'none';
+      document.getElementById('addonDetails').style.display = 'block';
+      
+      const isFavorite = favorites.includes(addon.id);
+      
+      const detailsContent = document.getElementById('detailsContent');
+      detailsContent.innerHTML = `
+        <div class="addon-card">
+          <span class="favorite ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${addon.id})">${isFavorite ? '★' : '☆'}</span>
+          <img src="${addon.image}" alt="${addon.name}">
+          <h3>${addon.name}</h3>
+          <p><strong>Category:</strong> ${addon.category}</p>
+          <p><strong>Version:</strong> ${addon.version}</p>
+          <p><strong>Author:</strong> ${addon.author}</p>
+          <p><strong>Downloads:</strong> ${addon.downloads.toLocaleString()}</p>
+          <p><strong>Rating:</strong> ${addon.rating}/5</p>
+          <p>${addon.details}</p>
+          <a href="#" class="download-btn" onclick="downloadAddon(${addon.id})">DOWNLOAD</a>
+          <div class="bottom-actions">
+            <div onclick="openRate(${addon.id})">⭐ Rate This Addon</div>
+            <div onclick="toggleFavorite(${addon.id})">❤️ ${isFavorite ? 'Remove Favorite' : 'Add to Favorites'}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function goBack() {
+      document.getElementById('addonDetails').style.display = 'none';
+      document.getElementById('addonGrid').style.display = 'grid';
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsPage').style.display = 'none';
+    }
+
+    function downloadAddon(addonId) {
+      if (!currentUser) {
+        showNotification('Please login to download addons', 'error');
+        openLogin();
+        return;
+      }
+      
+      const addon = addons.find(a => a.id === addonId);
+      if (!addon) return;
+      
+      addon.downloads++;
+      
+      if (addon.downloadLink && addon.downloadLink !== "#") {
+        window.open(addon.downloadLink, '_blank');
+        showNotification(`Downloading ${addon.name}...`, 'info');
+      } else {
+        showNotification('Download link not available yet', 'error');
+      }
+      
+      loadAddons();
+    }
+
+    function login() {
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!username || !password) {
+        showNotification('Please enter both username and password', 'error');
+        return;
+      }
+      
+      currentUser = {
+        username: username,
+        email: `${username}@example.com`,
+        country: 'mm'
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      updateUserInterface();
+      closeLogin();
+      showNotification(`Welcome back, ${username}!`, 'success');
+    }
+
+    function register() {
+      const username = document.getElementById('regUsername').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const confirmPassword = document.getElementById('regConfirmPassword').value;
+      const country = document.getElementById('regCountry').value;
+      
+      if (!username || !email || !password || !country) {
+        showNotification('Please fill all fields', 'error');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showNotification('Passwords do not match', 'error');
+        return;
+      }
+      
+      currentUser = {
+        username: username,
+        email: email,
+        country: country,
+        name: username
+      };
+      
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      updateUserInterface();
+      closeLogin();
+      showNotification(`Account created for ${username}!`, 'success');
+    }
+    
+    function updateUserInterface() {
+      const userInfo = document.getElementById('userInfo');
+      const guestInfo = document.getElementById('guestInfo');
+      const userName = document.getElementById('userName');
+      const userAvatar = document.getElementById('userAvatar');
+      
+      if (currentUser) {
+        userInfo.style.display = 'flex';
+        guestInfo.style.display = 'none';
+        userName.textContent = currentUser.username;
+        userAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+      } else {
+        userInfo.style.display = 'none';
+        guestInfo.style.display = 'block';
+      }
+    }
+    
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      updateUserInterface();
+      showNotification('You have been logged out', 'info');
+    }
+    
+    function showForgotPassword() {
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('registerBox').style.display = 'none';
+      document.getElementById('forgotPasswordBox').style.display = 'block';
+    }
+    
+    function resetPassword() {
+      const email = document.getElementById('resetEmail').value;
+      if (!email) {
+        showNotification('Please enter your email', 'error');
+        return;
+      }
+      
+      showNotification('Password reset instructions sent to your email', 'success');
+      showLogin();
+    }
+
+    function uploadProfileImage() {
+      const fileInput = document.getElementById('profileImageInput');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showNotification('Please select an image first', 'error');
+        return;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        showNotification('Image size should be less than 2MB', 'error');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        localStorage.setItem('profileImage', e.target.result);
+        document.getElementById('profileImage').src = e.target.result;
+        document.getElementById('userAvatar').innerHTML = '';
+        document.getElementById('userAvatar').style.backgroundImage = `url(${e.target.result})`;
+        document.getElementById('userAvatar').style.backgroundSize = 'cover';
+        showNotification('Profile picture updated successfully!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadProfileImage() {
+      const savedImage = localStorage.getItem('profileImage');
+      if (savedImage) {
+        document.getElementById('profileImage').src = savedImage;
+        document.getElementById('userAvatar').innerHTML = '';
+        document.getElementById('userAvatar').style.backgroundImage = `url(${savedImage})`;
+        document.getElementById('userAvatar').style.backgroundSize = 'cover';
+      }
+    }
+
+    function updateProfile() {
+      if (!currentUser) {
+        showNotification('Please login to update profile', 'error');
+        openLogin();
+        return;
+      }
+
+      const name = document.getElementById('profileName').value;
+      const username = document.getElementById('profileUsername').value;
+      const email = document.getElementById('profileEmail').value;
+      const country = document.getElementById('profileCountry').value;
+      const password = document.getElementById('profilePassword').value;
+
+      if (!name || !username || !email || !country) {
+        showNotification('Please fill all required fields', 'error');
+        return;
+      }
+
+      currentUser.name = name;
+      currentUser.username = username;
+      currentUser.email = email;
+      currentUser.country = country;
+      
+      if (password) {
+        showNotification('Profile and password updated successfully!', 'success');
+      } else {
+        showNotification('Profile updated successfully!', 'success');
+      }
+
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      updateUserInterface();
+    }
+
+    function changeThemeColor(color) {
+      themeColor = color;
+      localStorage.setItem('themeColor', color);
+      applyThemeColor();
+      
+      document.querySelectorAll('.color-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      
+      showNotification('Theme color changed!', 'success');
+    }
+
+    function applyThemeColor() {
+      document.documentElement.style.setProperty('--theme-color', themeColor);
+      document.querySelectorAll('.login-btn, .register-btn, .back-btn').forEach(btn => {
+        btn.style.background = themeColor;
+      });
+    }
+
+    function openRate(addonId) {
+      if (!currentUser) {
+        showNotification('Please login to rate addons', 'error');
+        openLogin();
+        return;
+      }
+      
+      currentAddonId = addonId;
+      currentRate = 0;
+      document.getElementById('reviewText').value = '';
+      document.getElementById('commentInput').value = '';
+      
+      let stars = document.querySelectorAll("#stars span");
+      stars.forEach(s => s.classList.remove("active"));
+      
+      loadComments();
+      document.getElementById('rateModal').style.display = 'flex';
+    }
+
+    function loadComments() {
+      const addon = addons.find(a => a.id === currentAddonId);
+      if (!addon) return;
+      
+      const commentsList = document.getElementById('commentsList');
+      commentsList.innerHTML = '';
+      
+      if (addon.comments.length === 0) {
+        commentsList.innerHTML = '<p>No comments yet</p>';
+        return;
+      }
+      
+      addon.comments.forEach(comment => {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment';
+        commentDiv.innerHTML = `
+          <strong>${comment.user}:</strong> ${comment.text}
+          <span class="reply" onclick="replyToComment('${comment.user}')">Reply</span>
+        `;
+        commentsList.appendChild(commentDiv);
+      });
+    }
+
+    function addComment() {
+      const commentText = document.getElementById('commentInput').value;
+      if (!commentText) {
+        showNotification('Please write a comment', 'error');
+        return;
+      }
+      
+      const addon = addons.find(a => a.id === currentAddonId);
+      if (addon) {
+        addon.comments.push({
+          user: currentUser.username,
+          text: commentText,
+          timestamp: new Date().toISOString()
+        });
+        
+        document.getElementById('commentInput').value = '';
+        loadComments();
+        showNotification('Comment added!', 'success');
+      }
+    }
+
+    function replyToComment(username) {
+      document.getElementById('commentInput').value = `@${username} `;
+      document.getElementById('commentInput').focus();
+    }
+
+    function setStar(num) {
+      currentRate = num;
+      let stars = document.querySelectorAll("#stars span");
+      stars.forEach((s, i) => s.classList.toggle("active", i < num));
+    }
+    
+    function confirmRate() {
+      const reviewText = document.getElementById('reviewText').value;
+      showNotification(`Thank you for your ${currentRate} star rating!`, 'success');
+      closeRateModal();
+    }
+
+    function closeRateModal() {
+      document.getElementById('rateModal').style.display = 'none';
+    }
+
+    function openUploadModal() {
+      if (!currentUser) {
+        showNotification('Please login to upload addons', 'error');
+        openLogin();
+        return;
+      }
+      document.getElementById('uploadModal').style.display = 'flex';
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').style.display = 'none';
+    }
+
+    function submitAddon() {
+      const name = document.getElementById('addonName').value;
+      const description = document.getElementById('addonDescription').value;
+      const version = document.getElementById('addonVersion').value;
+      const category = document.getElementById('addonCategory').value;
+      const downloadLink = document.getElementById('addonDownloadLink').value;
+      const imageLink = document.getElementById('addonImageLink').value;
+      
+      if (!name || !description || !version || !downloadLink) {
+        showNotification('Please fill all required fields', 'error');
+        return;
+      }
+      
+      const newAddon = {
+        id: addons.length + 1,
+        name: name,
+        description: description,
+        image: imageLink || "https://via.placeholder.com/300x180?text=Addon+Image",
+        category: category,
+        downloads: 0,
+        rating: 0,
+        version: version,
+        author: currentUser.username,
+        details: description,
+        downloadLink: downloadLink,
+        comments: []
+      };
+      
+      addons.unshift(newAddon);
+      loadAddons();
+      closeUploadModal();
+      showNotification('Addon uploaded successfully!', 'success');
+    }
+
+    function toggleDropdown() {
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+
+    function openLogin() { 
+      document.getElementById("loginModal").style.display = "flex"; 
+      showLogin(); 
+    }
+    
+    function closeLogin() { 
+      document.getElementById("loginModal").style.display = "none"; 
+    }
+    
+    function showRegister() {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("registerBox").style.display = "block";
+      document.getElementById("forgotPasswordBox").style.display = "none";
+    }
+    
+    function showLogin() {
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("registerBox").style.display = "none";
+      document.getElementById("forgotPasswordBox").style.display = "none";
+    }
+
+    function openSettings() {
+      document.getElementById("settingsPage").style.display = "block";
+      document.getElementById("dropdownMenu").classList.remove("show");
+      loadFavorites();
+      loadProfileImage();
+      
+      if (currentUser) {
+        document.getElementById('profileName').value = currentUser.name || currentUser.username;
+        document.getElementById('profileUsername').value = currentUser.username;
+        document.getElementById('profileEmail').value = currentUser.email;
+        document.getElementById('profileCountry').value = currentUser.country || '';
+      }
+    }
+    
+    function setMode(mode) {
+      if (mode === "light") document.body.classList.remove("dark");
+      else if (mode === "dark") document.body.classList.add("dark");
+      else if (mode === "auto") {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.body.classList.add("dark");
+        } else {
+          document.body.classList.remove("dark");
+        }
+      }
+      localStorage.setItem('themeMode', mode);
+    }
+
+    function showNotification(message, type = 'info') {
+      const existingNotifications = document.querySelectorAll('.notification');
+      existingNotifications.forEach(notif => notif.remove());
+      
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.style.opacity = '1', 10);
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.navbar a')) {
+        document.getElementById("dropdownMenu").classList.remove("show");
+      }
+      
+      if (event.target === document.getElementById('loginModal')) closeLogin();
+      if (event.target === document.getElementById('rateModal')) closeRateModal();
+      if (event.target === document.getElementById('uploadModal')) closeUploadModal();
+    }
+  </script>
+</body>
+</html>
